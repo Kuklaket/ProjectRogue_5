@@ -9,6 +9,6 @@ public class Door : MonoBehaviour
     
     public void OpenDoor()
     {
-        _animator.SetBool("IsOpen", true);
+        _animator.SetBool(HashAnimationsNames.IsOpenAsHash, true);
     }
 }
