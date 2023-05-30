@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class DoorTrigger : MonoBehaviour
 {
     [SerializeField] private GameObject _rogue;
@@ -12,11 +11,10 @@ public class DoorTrigger : MonoBehaviour
     [SerializeField] private Alarm _actionAlarm;
     [SerializeField] private Door _actionDoor;
 
-    private float _timer = 0;
-    private float _timerEndValue = 1;
+    private float _timer = 0f;
+    private float _timerEndValue = 1f;
     private bool _isStarted = false;
     private bool _is—ommingIn = true;
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -27,29 +25,31 @@ public class DoorTrigger : MonoBehaviour
                 _isStarted = true;
                 _actionRogue.ChangeSpeed();
                 _is—ommingIn = !_is—ommingIn;
+                StartCoroutine(StartTimer());
             }
             else
             {
                 _actionAlarm.ChangeAlarmStatus();
             }
         }
-
-        _actionDoor.OpenDoor();
     }
 
-    private void Update()
+    private IEnumerator StartTimer()
     {
         if (_isStarted == true)
         {
-            _timer = _timer + Time.deltaTime;
-        }
+            while (_timer < _timerEndValue)
+            {
+                _timer = _timer + Time.deltaTime;
 
-        if (_timer >= _timerEndValue)
-        {
+                yield return null;
+            }
+
             _isStarted = false;
+            _timer = 0;
             _actionRogue.ChangeSpeed();
             _actionAlarm.ChangeAlarmStatus();
-            _timer = 0;
+            _actionDoor.OpenDoor();
         }
     }
 }
