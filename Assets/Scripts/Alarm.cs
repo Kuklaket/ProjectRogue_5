@@ -6,37 +6,45 @@ public class Alarm : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private AudioSource _sos;
-    private float _volumeMinimum = 0.4f;
-    private float _volumeMaximum = 1f;
-    private float _additionalVolume = 0.1f;
+
+    private float _volumeMinimum = 0.3f;
+    private float _volumeMaximum = 0.9f;
     private bool _isOn = false;
 
     public void ChangeAlarmStatus()
     {
         _isOn = !_isOn;
 
+        Coroutine coroutineForSound;
+
         if (_isOn == true)
         {
             _sos.volume = _volumeMinimum;
             _sos.Play();
-            _animator.SetBool("IsHack", true);
-        }
-    }
+            _animator.SetBool(HashAnimationsNames.IsHackAsHash, true);
 
-    private void Update()
-    {
-        if (_isOn == true)
-        {            
-            _sos.volume = Mathf.MoveTowards(_sos.volume, _volumeMaximum, _additionalVolume * Time.deltaTime);
+            coroutineForSound = StartCoroutine(ChangeVolume(_volumeMaximum));
         }
         else
         {
-            _sos.volume = Mathf.MoveTowards(_sos.volume, _volumeMinimum, _additionalVolume * Time.deltaTime);
+            coroutineForSound = StartCoroutine(ChangeVolume(_volumeMinimum));
+        }
+    }
+
+    private IEnumerator ChangeVolume(float targetingVolume)
+    {
+        float changeVolumeCount = 0.3f;
+
+        while (_sos.volume != targetingVolume)
+        {
+            _sos.volume = Mathf.MoveTowards(_sos.volume, targetingVolume, changeVolumeCount * Time.deltaTime);
+
+            yield return null;
         }
 
-        if (_sos.volume <= _volumeMinimum)
+        if (_isOn == false)
         {
-            _animator.SetBool("IsHack", false);
+            _animator.SetBool(HashAnimationsNames.IsHackAsHash, false);
             _sos.Stop();
         }
     }
