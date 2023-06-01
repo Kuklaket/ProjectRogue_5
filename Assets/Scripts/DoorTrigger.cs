@@ -14,17 +14,17 @@ public class DoorTrigger : MonoBehaviour
     private float _timer = 0f;
     private float _timerEndValue = 1f;
     private bool _isStarted = false;
-    private bool _is—ommingIn = true;
+    private bool _isCommingIn = true;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Rogue>(out Rogue rogue))
         {
-            if (_is—ommingIn == true)
+            if (_isCommingIn == true)
             {
                 _isStarted = true;
                 _actionRogue.ChangeSpeed();
-                _is—ommingIn = !_is—ommingIn;
+                _isCommingIn = !_isCommingIn;
                 StartCoroutine(StartTimer());
             }
             else
