@@ -7,6 +7,9 @@ public class Alarm : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private AudioSource _sos;
 
+    private Coroutine _upVolume;
+    private Coroutine _downolume;
+
     private float _volumeMinimum = 0.3f;
     private float _volumeMaximum = 0.9f;
     private bool _isOn = false;
@@ -15,19 +18,29 @@ public class Alarm : MonoBehaviour
     {
         _isOn = !_isOn;
 
-        Coroutine coroutineForSound;
-
         if (_isOn == true)
         {
             _sos.volume = _volumeMinimum;
             _sos.Play();
             _animator.SetBool(HashAnimationsNames.IsHackAsHash, true);
 
-            coroutineForSound = StartCoroutine(ChangeVolume(_volumeMaximum));
+            StopNoNullCoroutine(_downolume);
+
+            _upVolume = StartCoroutine(ChangeVolume(_volumeMaximum));
         }
         else
         {
-            coroutineForSound = StartCoroutine(ChangeVolume(_volumeMinimum));
+            StopNoNullCoroutine(_upVolume);
+
+            _downolume = StartCoroutine(ChangeVolume(_volumeMinimum));
+        }
+    }
+
+    private void StopNoNullCoroutine(Coroutine coroutine)
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
         }
     }
 
